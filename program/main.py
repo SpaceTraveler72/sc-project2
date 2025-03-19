@@ -149,14 +149,14 @@ def main():
             results_file.write(f"Newton's method root:  {root_newton}, error: {abs(root_newton - actual_root)}, iterations: {iter_newton}\n")  # type: ignore
             results_file.write(f"Secant method root:    {root_secant}, error: {abs(root_secant - actual_root)}, iterations: {iter_secant}\n") # type: ignore
 
-            # Store results for plotting
-            results.append((name, history_bisection, history_newton, history_secant))
+            # Store results for plotting and convergence testing
+            results.append((name, history_bisection, history_newton, history_secant, actual_root))
     
     # Print convergence types
     ConvergenceClassifier.test_convergence(results)
 
     # Second loop: Plot the convergence
-    for name, history_bisection, history_newton, history_secant in results:
+    for name, history_bisection, history_newton, history_secant, actual_root in results:
         if history_bisection is None:  # Skip plotting for skipped functions
             continue
         plot_convergence(history_bisection, f"{name} - Bisection Method Convergence")
