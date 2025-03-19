@@ -1,0 +1,15 @@
+
+Testing convergence for Function 1:
+Bisection method: Superlinear convergence (Avg lr: 1.0073932533057872)
+Newton's method: Quadratic convergence (Avg lr: 2.0659357311406876)
+Secant method: Superlinear convergence (Avg lr: 1.653640635715064)
+
+Testing convergence for Function 2:
+Bisection method: Superlinear convergence (Avg lr: 1.0422982029339525)
+Newton's method: Quadratic convergence (Avg lr: 2.097731862599783)
+Secant method: Superlinear convergence (Avg lr: 1.6716279246867891)
+
+Testing convergence for Function 3:
+Bisection method: Superlinear convergence (Avg lr: 1.0418710828197502)
+Newton's method: Superlinear convergence (Avg lr: 1.0673936750125383)
+Secant method: Superlinear convergence (Avg lr: 1.0483780534719251)

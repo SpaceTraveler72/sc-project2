@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from test_convergence import ConvergenceClassifier
 
 # Define the functions
 def f1(x):
@@ -19,12 +20,12 @@ def bisection(f, a, b, max_iter=1000, callback=None):
     for _ in range(max_iter):
         # Bisection formula
         c = (a + b) / 2
-        # Call the callback function if provided
-        if callback:
-            callback(c)
         # if the previous c is the same as the current c, return c
         if c == prev_c:
             return c
+        # Call the callback function if provided
+        if callback:
+            callback(c)
         
         prev_c = c
         #set the new interval
@@ -40,12 +41,12 @@ def newton(f, df, x0, max_iter=1000, callback=None):
     for _ in range(max_iter):
         # newton's formula
         x1 = x0 - f(x0) / df(x0)
-        # Call the callback function if provided
-        if callback:
-            callback(x1)
         # if the previous x1 is the same as the current x1, return x1
         if x1 == prev_x1:
             return x1
+        # Call the callback function if provided
+        if callback:
+            callback(x1)
         prev_x1 = x1
         x0 = x1
     return x0
@@ -59,13 +60,14 @@ def secant(f, x0, x1, max_iter=1000, callback=None):
             print("Division by zero in secant method.")
             return x1
         # Secant formula
-        x2 = x1 - f(x1) * (x1 - x0) / (f(x1) - f(x0))
-        # Call the callback function if provided
-        if callback:
-            callback(x2)
+        x2 = x1 - f(x1) * ((x1 - x0) / (f(x1) - f(x0)))
         # if the previous x2 is the same as the current x2, return x2
         if x2 == prev_x2:
             return x2
+        
+        # Call the callback function if provided
+        if callback:
+            callback(x2)
         
         prev_x2 = x2
         x0, x1 = x1, x2
@@ -82,7 +84,7 @@ def df3(x):
     return 3*x**2 - 6*x + 3
 
 # Function to find valid values for the bisection method
-def find_valid_bisection_interval(f, start, end, step=0.1):
+def find_valid_bisection_interval(f, start, end, step=0.05):
     a = start
     while a < end:
         b = a + step
@@ -118,31 +120,45 @@ def main():
         (f3, df3, "Function 3", 1.0)
     ]
 
-    for f, df, name, actual_root in functions:
-        print(f"\nProcessing {name}:")
+    results = []
 
-        # Define the interval and initial guesses
-        try:
-            a, b = find_valid_bisection_interval(f, -1.23, 1)
-            print(f"Valid interval for bisection: [{a}, {b}]")
-        except ValueError as e:
-            print(f"Skipping {name} due to invalid interval: {e}")
+    # First loop: Write results to the file
+    with open("program/results.txt", "w") as results_file:
+        for f, df, name, actual_root in functions:
+            results_file.write(f"\nProcessing {name}:\n")
+
+            # Define the interval and initial guesses
+            try:
+                a, b = find_valid_bisection_interval(f, -1.23, 1)
+                results_file.write(f"Valid interval for bisection: [{a}, {b}]\n")
+            except ValueError as e:
+                results_file.write(f"Skipping {name} due to invalid interval: {e}\n")
+                results.append((name, None, None, None))  # Append empty results for skipped functions
+                continue
+
+            x0_newton = -0.353
+            x0_secant, x1_secant = -0.567, -0.353
+
+            # Track convergence for each method
+            root_bisection, history_bisection, iter_bisection = track_convergence(bisection, f, a, b)
+            root_newton, history_newton, iter_newton = track_convergence(newton, f, df, x0_newton)
+            root_secant, history_secant, iter_secant = track_convergence(secant, f, x0_secant, x1_secant)
+
+            # Write the roots and iterations to the file
+            results_file.write(f"Bisection method root: {root_bisection}, error: {abs(root_bisection - actual_root)}, iterations: {iter_bisection}\n")
+            results_file.write(f"Newton's method root:  {root_newton}, error: {abs(root_newton - actual_root)}, iterations: {iter_newton}\n")  # type: ignore
+            results_file.write(f"Secant method root:    {root_secant}, error: {abs(root_secant - actual_root)}, iterations: {iter_secant}\n") # type: ignore
+
+            # Store results for plotting
+            results.append((name, history_bisection, history_newton, history_secant))
+    
+    # Print convergence types
+    ConvergenceClassifier.test_convergence(results)
+
+    # Second loop: Plot the convergence
+    for name, history_bisection, history_newton, history_secant in results:
+        if history_bisection is None:  # Skip plotting for skipped functions
             continue
-
-        x0_newton = -0.353
-        x0_secant, x1_secant = -0.567, -0.353
-
-        # Track convergence for each method
-        root_bisection, history_bisection, iter_bisection = track_convergence(bisection, f, a, b)
-        root_newton, history_newton, iter_newton = track_convergence(newton, f, df, x0_newton)
-        root_secant, history_secant, iter_secant = track_convergence(secant, f, x0_secant, x1_secant)
-
-        # Print the roots and iterations
-        print(f"Bisection method root: {root_bisection}, error: {abs(root_bisection - actual_root)}, iterations: {iter_bisection}")
-        print(f"Newton's method root:  {root_newton}, error: {abs(root_newton - actual_root)}, iterations: {iter_newton}")
-        print(f"Secant method root:    {root_secant}, error: {abs(root_secant - actual_root)}, iterations: {iter_secant}")
-
-        # Plot the convergence
         plot_convergence(history_bisection, f"{name} - Bisection Method Convergence")
         plot_convergence(history_newton, f"{name} - Newton's Method Convergence")
         plot_convergence(history_secant, f"{name} - Secant Method Convergence")

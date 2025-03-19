@@ -1,0 +1,18 @@
+
+Processing Function 1:
+Valid interval for bisection: [-0.029999999999999444, 0.02000000000000056]
+Bisection method root: 4.0843192021788317e-163, error: 4.0843192021788317e-163, iterations: 589
+Newton's method root:  0.0, error: 0.0, iterations: 5
+Secant method root:    0.0, error: 0.0, iterations: 8
+
+Processing Function 2:
+Valid interval for bisection: [-1.0299999999999998, -0.9799999999999998]
+Bisection method root: -0.9999999999999998, error: 2.220446049250313e-16, iterations: 49
+Newton's method root:  -1.0, error: 0.0, iterations: 6
+Secant method root:    -1.0, error: 0.0, iterations: 8
+
+Processing Function 3:
+Valid interval for bisection: [0.970000000000001, 1.020000000000001]
+Bisection method root: 1.000029296875001, error: 2.9296875001083578e-05, iterations: 49
+Newton's method root:  1.0000015247181064, error: 1.524718106438172e-06, iterations: 32
+Secant method root:    0.9999946290318482, error: 5.3709681517855046e-06, iterations: 45
